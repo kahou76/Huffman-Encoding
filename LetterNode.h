@@ -18,11 +18,11 @@ private:
 public:
 
 
-    LetterNode(){
-        left = right = nullptr;
-        letter = '#';
-        freq = -1;
-    }
+    // LetterNode(){
+    //     left = right = nullptr;
+    //     letter = '#';
+    //     freq = -1;
+    // }
 
     LetterNode(char l, int f){
         left = right = nullptr;

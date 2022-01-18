@@ -5,6 +5,9 @@
 #include <queue>
 #include <memory>
 #include <unordered_map>
+#include <stdio.h>
+#include <ctype.h>
+#include <iterator>
 #include "LetterNode.h"
 using namespace std;
 
@@ -15,47 +18,26 @@ private:
     shared_ptr<vector<int>> frequency;
     vector<char> letter;
     unordered_map<char,string> SavingCode;
+    unordered_map<string,char> SavingChar;
 
 
 public:
 
     //constructor
-    Encoder(shared_ptr<vector<int>> fq){
-        this->frequency = fq;
-        BuildUpBsTree();
-
-    }
+    Encoder(shared_ptr<vector<int>> fq);
 
     //Encode
-    //Reading 1001111, return {'A','B','D'...}
-    shared_ptr<vector<char>> Encode(string str){
-
-        return nullptr;
-    }
+    //Reading ABBDDDADS, return {01010101, 10101010, 100011}
+    //Package them up into 8 bits
+    shared_ptr<vector<char>> Encode(string str);
 
     //Decode
-    //Reading {'A','B','D'...}, return 1001111
-    // string Decode(shared_ptr<vector<char>> num){
-    //     string hi;
-    // }
+    //Reading {10100111, 10101011, 10011}, return ABBDBAD
+    //1,0,1,...
+    string Decode(shared_ptr<vector<char>> code);
 
     //print the huffman codes from the root of huffman tree
-    void PrintCodes(shared_ptr<LetterNode> curr, string str){
-        if(curr == nullptr){
-            return;
-        }
-
-        if(curr->getLetter() != '$'){
-            cout << curr->getLetter() << ": " << str << endl;
-            // SavingCode = {curr->getLetter(),str};
-            // cout << "TEST: " << SavingCode[curr->getLetter()] << endl;
-        }
-
-        PrintCodes(curr->getLeft(), str + "1");
-        PrintCodes(curr->getRight(), str + "0");
-
-        
-    }
+    void SaveCodes(shared_ptr<LetterNode> curr, string str);
 
     //Comparsion of two Nodes
     struct greater{
@@ -65,41 +47,13 @@ public:
     };
 
     //Build Up the BStree
-    void BuildUpBsTree(){
-        letter = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+    void BuildUpBsTree();
+
+    // check if all digit
+    bool isNumber(const char &c);
+
+    // check if all Alphabet
+    bool isAlphabet(const string &str);
         
-        shared_ptr<LetterNode> left, right, top;
 
-        priority_queue<shared_ptr<LetterNode>, vector<shared_ptr<LetterNode>>, greater> pg;
-
-        int i = 0;
-        for(int fq : *frequency){
-
-            //pg.push( new LetterNode(letter[i], freq[i]) );
-            shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq);
-            pg.push(node);
-            i++;
-        }
-
-        while(pg.size() != 1){
-            left = pg.top();
-            pg.pop();
-            right = pg.top();
-            pg.pop();
-
-            // top = new LetterNode('$', left->getFreq() + right->getFreq());
-            top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq());
-
-            top->setLeft(left);
-            top->setRight(right);
-
-            pg.push(top);
-
-        }
-
-        PrintCodes(pg.top(), "");
-
-
-
-    }
 };
