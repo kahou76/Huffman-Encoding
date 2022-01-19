@@ -42,7 +42,12 @@ public:
     //Comparsion of two Nodes
     struct greater{
         bool operator()(shared_ptr<LetterNode> l, shared_ptr<LetterNode> r){
-            return (l->getFreq() > r->getFreq());
+            if(l->getFreq() == r->getFreq()){
+                return l->getLetter() > r->getLetter();
+            }else{
+                return l->getFreq() > r->getFreq();
+            }
+            
         }
     };
 

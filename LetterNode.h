@@ -11,6 +11,7 @@ class LetterNode{
 private:
     char letter;
     int freq;
+    //int 
     shared_ptr<LetterNode> left;
     shared_ptr<LetterNode> right;
     

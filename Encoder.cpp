@@ -71,11 +71,11 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
             if(got == SavingChar.end()){
                 //didn't find
                 store += c;
-                cout << "Store: " << store << endl;
+                //cout << "Store: " << store << endl;
             }else{
                 //found
                 result += SavingChar[store];
-                cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
+                //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
                 store.clear();
                 store += c;
             }
@@ -88,7 +88,7 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
             }else{
                 //found
                 result += SavingChar[store];
-                cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
+                //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
                 store.clear();
                 //store += c;
             }
@@ -111,8 +111,8 @@ void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
             
         }
 
-        SaveCodes(curr->getLeft(), str + "1");
-        SaveCodes(curr->getRight(), str + "0");
+        SaveCodes(curr->getLeft(), str + "0");
+        SaveCodes(curr->getRight(), str + "1");
 
         
     }
@@ -127,8 +127,15 @@ void Encoder::BuildUpBsTree(){
         for(int fq : *frequency){
 
             //pg.push( new LetterNode(letter[i], freq[i]) );
-            shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq);
-            pg.push(node);
+            //if the freq is 0, dont create node
+            if(fq < 1){
+                // stop create node
+            }else{
+                // create node
+                shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq);
+                pg.push(node);
+            }
+            
             i++;
         }
 
@@ -141,8 +148,26 @@ void Encoder::BuildUpBsTree(){
             // top = new LetterNode('$', left->getFreq() + right->getFreq());
             top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq());
 
-            top->setLeft(left);
-            top->setRight(right);
+            // If the letters have the same freq, go with alphabetic order
+            if(left->getFreq() == right->getFreq()){
+                // go with alphabetic order
+                char a = left->getLetter();
+                char b = right->getLetter();
+                int a1 = a -'0';
+                int b1 = b -'0';
+                if(a1 < b1){
+                    // the smaller ascii value go left, larger go right
+                    top->setLeft(left);
+                    top->setRight(right);
+                }else{
+                    top->setLeft(right);
+                    top->setRight(left);
+                }
+            }else{
+                top->setLeft(right);
+                top->setRight(left);
+            }
+            
 
             pg.push(top);
 
