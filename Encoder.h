@@ -37,13 +37,31 @@ public:
     string Decode(shared_ptr<vector<char>> code);
 
     //print the huffman codes from the root of huffman tree
-    void SaveCodes(shared_ptr<LetterNode> curr, string str);
+    void SaveCodes(shared_ptr<LetterNode> curr, string str, int totalf);
 
     //Comparsion of two Nodes
     struct greater{
         bool operator()(shared_ptr<LetterNode> l, shared_ptr<LetterNode> r){
             if(l->getFreq() == r->getFreq()){
-                return l->getLetter() > r->getLetter();
+                cout << "Left Letter: " << l->getTC() << "  Left Freq: " << l->getFreq() <<"  Right Letter: " << r->getTC() << "  Right Freq: "<< r->getFreq() << endl;
+                shared_ptr<LetterNode> l1, r1;
+                l1 = l;
+                r1 = r;
+                while(l1->getLeft() != nullptr){
+                    l1 = l1->getLeft();
+                }
+                while(r1->getLeft() != nullptr){
+                    r1 = r1->getLeft();
+                }
+                return l1->getLetter() > r1->getLetter();
+                
+                // if(l->getTC() == "$$" && r->getTC() == "$$"){
+                //     while(l->getLeft() != nullptr){
+                //         l = l->getLeft();
+                //     }
+                //     cout << "Leaf Letter: "<<l->getTC() << endl;
+                // }ss
+                //return l->getTC() > r->getTC();
             }else{
                 return l->getFreq() > r->getFreq();
             }
@@ -60,5 +78,36 @@ public:
     // check if all Alphabet
     bool isAlphabet(const string &str);
         
+    //pack up 8 index of int into a char
+    //asuming vector of 8 or less bits
+    char packInt(vector<int> v){
+        char result = 0; //0000 0000
+        int str = 0;
+        for(int i=0; i<v.size() && i<8; i++){
+            str *= 10;
+            str += v[i];
+            result << 1; //shift left
+            result = result | v[i]; // value is 0b0 or 0b1
+        }
+        int shift = 8 -v.size(); // for example, 
+        cout << "Shift: " << shift << endl;
+        result = result << shift;
+        
+        
+        cout << "decial output: " << str << endl;
+        cout << "Binary output: " << result << endl;
+
+        return result;
+
+    }
+
+    //Unpack the char into int
+    int unpackChar(vector<int> v, int position){
+        int index = position / 32;
+        int offset = position % 32;
+        int integer = v[index];
+        int result = (integer >> offset) & 0b1;
+        return result;
+    }
 
 };

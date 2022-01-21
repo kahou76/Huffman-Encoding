@@ -13,6 +13,8 @@ Encoder::Encoder(shared_ptr<vector<int>> fq){
 shared_ptr<vector<char>> Encoder::Encode(string str){
         shared_ptr<vector<char>> result;
         vector<char> save;
+        queue<int> store;
+        
 
         //if string is not Alphabet
         if(!isAlphabet(str)){
@@ -32,15 +34,19 @@ shared_ptr<vector<char>> Encoder::Encode(string str){
                 //str[i]=tolower(str[i]);
                 throw invalid_argument("Encode Error: the input string is uppercase");
             }
+            // example: str[i] = a; tmp = 10011 
             string tmp = SavingCode[str[i]];
+            // string myString = "01000101";
+            // int z = atoi(myString.c_str());
+            // cout << z << endl;
                 for(int j =0 ;j <tmp.size(); j++){
                     char c = tmp[j];
+                    int s = tmp[j] - '0';
+                    //cout << "S: " << s << endl;
                     save.push_back(c);
+                    store.push(s);
                     
                 }
-            
-            
-
         }
         cout << "Enode Output: {";
         for(int y = 0; y<save.size(); y++){
@@ -48,6 +54,22 @@ shared_ptr<vector<char>> Encoder::Encode(string str){
         }
         cout << "}";
         cout << endl;
+
+        int count = 0; 
+        vector<int> eightbit;
+        // 10011010 10101101 01010111
+        while(count <= 8){
+            
+            while(!store.empty()){
+                eightbit.push_back(store.front());
+                store.pop();
+            }
+            
+            count++;
+        }
+
+        char res = packInt(eightbit);
+
         result = make_shared<vector<char>>(save);
         //cout << "Str: " << str << endl;
         return result;
@@ -97,7 +119,7 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
         return result;
     }
 
-void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
+void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str, int tf){
         if(curr == nullptr){
             return;
         }
@@ -105,21 +127,22 @@ void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
         if(curr->getLetter() != '$'){
             //cout << curr->getLetter() << ": " << str << endl;
             // SavingCode = {curr->getLetter(),str};
+            //cout << "TOTAL: "<<tf << endl;
             SavingCode[curr->getLetter()] = str;
             SavingChar[str] = curr->getLetter();
             cout << "Letter: " << curr->getLetter() << ": " << SavingCode[curr->getLetter()] << endl;
             
         }
 
-        SaveCodes(curr->getLeft(), str + "0");
-        SaveCodes(curr->getRight(), str + "1");
+        SaveCodes(curr->getLeft(), str + "0", tf + curr->getFreq());
+        SaveCodes(curr->getRight(), str + "1", tf + curr->getFreq());
 
         
     }
 
 void Encoder::BuildUpBsTree(){
         
-        shared_ptr<LetterNode> left, right, top;
+        shared_ptr<LetterNode> left, right, top, left1, right1;
 
         priority_queue<shared_ptr<LetterNode>, vector<shared_ptr<LetterNode>>, greater> pg;
 
@@ -132,7 +155,8 @@ void Encoder::BuildUpBsTree(){
                 // stop create node
             }else{
                 // create node
-                shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq);
+                string str = "";
+                shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq,str + letter[i]);
                 pg.push(node);
             }
             
@@ -146,15 +170,33 @@ void Encoder::BuildUpBsTree(){
             pg.pop();
 
             // top = new LetterNode('$', left->getFreq() + right->getFreq());
-            top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq());
+            string tc = "";
+            // cout << "L: " <<left->getLetter() << endl;
+            // cout << "R: " << right->getLetter() << endl;
+            // string tc += left->getLetter();
+            // string tc +=  right->getLetter();
+            top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq(),tc + left->getLetter() + right->getLetter());
+            //cout << tc << endl;
 
             // If the letters have the same freq, go with alphabetic order
+            // for example: a = 1, h = 1
             if(left->getFreq() == right->getFreq()){
                 // go with alphabetic order
-                char a = left->getLetter();
-                char b = right->getLetter();
+                left1 = left;
+                right1 = right;
+                while(left1->getLeft() != nullptr){
+                    left1 = left1->getLeft();
+                }
+                while(right1->getLeft() != nullptr){
+                    right1 = right1->getLeft();
+                }
+                char a = left1->getLetter();
+                char b = right1->getLetter();
                 int a1 = a -'0';
                 int b1 = b -'0';
+
+                cout << "A: " << a1 << "    B1: " << b1 << endl;
+
                 if(a1 < b1){
                     // the smaller ascii value go left, larger go right
                     top->setLeft(left);
@@ -173,7 +215,7 @@ void Encoder::BuildUpBsTree(){
 
         }
 
-        SaveCodes(pg.top(), "");
+        SaveCodes(pg.top(), "",0);
 
 
 
