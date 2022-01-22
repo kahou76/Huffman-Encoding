@@ -11,7 +11,6 @@ class LetterNode{
 private:
     char letter;
     int freq;
-    string twochar;
     shared_ptr<LetterNode> left;
     shared_ptr<LetterNode> right;
     
@@ -25,11 +24,10 @@ public:
     //     freq = -1;
     // }
 
-    LetterNode(char l, int f, string tc){
+    LetterNode(char l, int f){
         left = right = nullptr;
         letter = l;
         freq = f;
-        twochar = tc;
     }
 
     ~LetterNode(){}
@@ -40,10 +38,6 @@ public:
 
     void setFreq(int f){
         freq = f;
-    }
-
-    void setTC(string tc){
-        twochar = tc;
     }
 
     void setLeft(shared_ptr<LetterNode> l){
@@ -60,10 +54,6 @@ public:
 
     int getFreq(){
         return freq;
-    }
-
-    string getTC(){
-        return twochar;
     }
 
     shared_ptr<LetterNode> getLeft(){

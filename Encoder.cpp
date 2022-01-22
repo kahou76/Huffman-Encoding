@@ -2,7 +2,7 @@
 
 Encoder::Encoder(shared_ptr<vector<int>> fq){
         letter = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','|'};
-        if(fq->size() != 27){
+        if(fq->size() != 26){
             throw invalid_argument("Constructor Error: Must have 26 Letter frequenices");
         }
         this->frequency = fq;
@@ -148,12 +148,8 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
                     //break
                     cout << "\nDecode Output: " << result << endl;
                     return result;
-                    //break;
                 }else{
                     result += SavingChar[store];
-                    //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
-                    //store.clear();
-                    //store += c;
                 }
             }
         
@@ -161,7 +157,7 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
         return result;
     }
 
-void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str, int tf){
+void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
         if(curr == nullptr){
             return;
         }
@@ -176,11 +172,34 @@ void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str, int tf){
             
         }
 
-        SaveCodes(curr->getLeft(), str + "0", tf + curr->getFreq());
-        SaveCodes(curr->getRight(), str + "1", tf + curr->getFreq());
+        SaveCodes(curr->getLeft(), str + "0");
+        SaveCodes(curr->getRight(), str + "1");
 
         
     }
+
+//Comparsion of two Nodes
+struct greater{
+    bool operator()(shared_ptr<LetterNode> l, shared_ptr<LetterNode> r){
+        if(l->getFreq() == r->getFreq()){
+            //cout << "Left Letter: " << l->getTC() << "  Left Freq: " << l->getFreq() <<"  Right Letter: " << r->getTC() << "  Right Freq: "<< r->getFreq() << endl;
+            shared_ptr<LetterNode> l1, r1;
+            l1 = l;
+            r1 = r;
+            while(l1->getLeft() != nullptr){
+                l1 = l1->getLeft();
+            }
+            while(r1->getLeft() != nullptr){
+                r1 = r1->getLeft();
+            }
+            return l1->getLetter() > r1->getLetter();
+            
+        }else{
+            return l->getFreq() > r->getFreq();
+        }
+        
+    }
+};
 
 void Encoder::BuildUpBsTree(){
         
@@ -197,13 +216,17 @@ void Encoder::BuildUpBsTree(){
                 // stop create node
             }else{
                 // create node
-                string str = "";
-                shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq,str + letter[i]);
+                
+                shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[i],fq);
                 pg.push(node);
             }
             
             i++;
         }
+        //Push the delimiter | node into pq
+        shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[26],INT_MAX);
+        pg.push(node);
+        
 
         while(pg.size() != 1){
             left = pg.top();
@@ -212,12 +235,8 @@ void Encoder::BuildUpBsTree(){
             pg.pop();
 
             // top = new LetterNode('$', left->getFreq() + right->getFreq());
-            string tc = "";
-            // cout << "L: " <<left->getLetter() << endl;
-            // cout << "R: " << right->getLetter() << endl;
-            // string tc += left->getLetter();
-            // string tc +=  right->getLetter();
-            top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq(),tc + left->getLetter() + right->getLetter());
+
+            top = make_shared<LetterNode>('$',left->getFreq() + right->getFreq());
             //cout << tc << endl;
 
             // If the letters have the same freq, go with alphabetic order
@@ -257,7 +276,7 @@ void Encoder::BuildUpBsTree(){
 
         }
 
-        SaveCodes(pg.top(), "",0);
+        SaveCodes(pg.top(), "");
 
 
 
@@ -283,3 +302,41 @@ bool Encoder::isAlphabet(const string &str){
         }
         return true;
     }
+
+char Encoder::packInt(vector<int> v){
+    char result = 0x00; //0000 0000
+    string str = "";
+    for(int i=0; i<v.size(); i++){
+        //str *= 10;
+        str += to_string(v[i]);
+        result = result << 1; //shift left
+        result = result | v[i]; // value is 0b0 or 0b1
+    }
+    int shift = 8 -v.size(); 
+    cout << "Shift: " << shift << endl;
+    result = result << shift;
+    
+    string binary = bitset<8>(result).to_string();
+    
+    cout << "decial output: " << str << endl;
+    cout << "Binary output: " << binary << endl;
+
+    return result;
+
+}
+
+shared_ptr<vector<char>> Encoder::unpackChar(shared_ptr<vector<char>> v){
+    shared_ptr<vector<char>> result;
+    vector<char> store;
+
+    for(int i=0; i<v->size(); i++){
+        char c = v->at(i);
+        string binary = bitset<8>(c).to_string();
+        for(int j=0; j<binary.size(); j++){
+            store.push_back(binary[j]);
+        }
+    }
+    
+    result = make_shared<vector<char>>(store);
+    return result;
+}
