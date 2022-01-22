@@ -41,6 +41,30 @@ public:
     //print the huffman codes from the root of huffman tree
     void SaveCodes(shared_ptr<LetterNode> curr, string str);
 
+    //Comparsion of two Nodes
+    struct greater{
+        bool operator()(shared_ptr<LetterNode> l, shared_ptr<LetterNode> r){
+            if(l->getFreq() == r->getFreq()){
+                //cout << "Left Letter: " << l->getTC() << "  Left Freq: " << l->getFreq() <<"  Right Letter: " << r->getTC() << "  Right Freq: "<< r->getFreq() << endl;
+                shared_ptr<LetterNode> l1, r1;
+                l1 = l;
+                r1 = r;
+                while(l1->getLeft() != nullptr){
+                    l1 = l1->getLeft();
+                }
+                while(r1->getLeft() != nullptr){
+                    r1 = r1->getLeft();
+                }
+                return l1->getLetter() > r1->getLetter();
+                
+            }else{
+                return l->getFreq() > r->getFreq();
+            }
+            
+        }
+    };
+
+
     //Build Up the BStree
     void BuildUpBsTree();
 

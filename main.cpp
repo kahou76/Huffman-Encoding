@@ -23,12 +23,14 @@ int main() {
      vector<int> abcd = {2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, INT_MAX};
      vector<int> abcdefgh = {2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, INT_MAX};
      vector<int> abcdefghi = {2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,1};
+     vector<int> qiqi = {2,  2,  2,  2,  2,  4,  7,  8,  9,  10, 11, 12, 13, 14,15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 1};
+     vector<int> a = {1,1,1,1};
 
 
-     shared_ptr<vector<int>> freqptr = make_shared<vector<int>>(happy);
+     shared_ptr<vector<int>> freqptr = make_shared<vector<int>>(a);
      Encoder encode(freqptr);
 
-     shared_ptr<vector<char>> en = encode.Encode("happy");
+     shared_ptr<vector<char>> en = encode.Encode("abcd");
      vector<char> correct = {'1','0','1','0'};
      vector<char> LastOneIsNotCorrect = {'0','1','0','1','0','1','1','1','1','1','1','0','1','1','1','1','0','1','1','1','0','1','0','0'};
      vector<char> wrong = {'1','@'};

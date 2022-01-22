@@ -2,8 +2,8 @@
 
 Encoder::Encoder(shared_ptr<vector<int>> fq){
         letter = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','|'};
-        if(fq->size() != 26){
-            throw invalid_argument("Constructor Error: Must have 26 Letter frequenices");
+        if(fq->size() != 27){
+            throw invalid_argument("Constructor Error: Must have 26 Letter frequenices and one delimiter frequency at the 27th index");
         }
         this->frequency = fq;
         BuildUpBsTree();
@@ -178,28 +178,6 @@ void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
         
     }
 
-//Comparsion of two Nodes
-struct greater{
-    bool operator()(shared_ptr<LetterNode> l, shared_ptr<LetterNode> r){
-        if(l->getFreq() == r->getFreq()){
-            //cout << "Left Letter: " << l->getTC() << "  Left Freq: " << l->getFreq() <<"  Right Letter: " << r->getTC() << "  Right Freq: "<< r->getFreq() << endl;
-            shared_ptr<LetterNode> l1, r1;
-            l1 = l;
-            r1 = r;
-            while(l1->getLeft() != nullptr){
-                l1 = l1->getLeft();
-            }
-            while(r1->getLeft() != nullptr){
-                r1 = r1->getLeft();
-            }
-            return l1->getLetter() > r1->getLetter();
-            
-        }else{
-            return l->getFreq() > r->getFreq();
-        }
-        
-    }
-};
 
 void Encoder::BuildUpBsTree(){
         
@@ -224,8 +202,8 @@ void Encoder::BuildUpBsTree(){
             i++;
         }
         //Push the delimiter | node into pq
-        shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[26],INT_MAX);
-        pg.push(node);
+        // shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[26],INT_MAX);
+        // pg.push(node);
         
 
         while(pg.size() != 1){
