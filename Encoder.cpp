@@ -1,8 +1,8 @@
 # include "Encoder.h"
 
 Encoder::Encoder(shared_ptr<vector<int>> fq){
-        letter = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
-        if(fq->size() != 26){
+        letter = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','|'};
+        if(fq->size() != 27){
             throw invalid_argument("Constructor Error: Must have 26 Letter frequenices");
         }
         this->frequency = fq;
@@ -13,13 +13,16 @@ Encoder::Encoder(shared_ptr<vector<int>> fq){
 shared_ptr<vector<char>> Encoder::Encode(string str){
         shared_ptr<vector<char>> result;
         vector<char> save;
+        vector<char> v;
         queue<int> store;
+        
         
 
         //if string is not Alphabet
         if(!isAlphabet(str)){
             throw invalid_argument("Encode Error: the string input is not Alphabet");
         }
+        str += '|';
 
         //if the string is empty
         if(str.size() == 0){
@@ -47,6 +50,12 @@ shared_ptr<vector<char>> Encoder::Encode(string str){
                     store.push(s);
                     
                 }
+
+            //push the delimiter | at the end of vector
+            // string end = SavingCode['|'];
+            // for(int u=0; u<end.size(); u++){
+
+            // }
         }
         cout << "Enode Output: {";
         for(int y = 0; y<save.size(); y++){
@@ -55,36 +64,50 @@ shared_ptr<vector<char>> Encoder::Encode(string str){
         cout << "}";
         cout << endl;
 
-        int count = 0; 
-        vector<int> eightbit;
+        
+        
         // 10011010 10101101 01010111
-        while(count <= 8){
+        //while no empty
+        //push 10011010 for eight times loop
+        while(!store.empty()){
             
-            while(!store.empty()){
-                eightbit.push_back(store.front());
-                store.pop();
+            vector<int> eightbit;
+            for(int i=0; i<8; i++){
+                
+                
+                    if(store.empty()){
+                        break;
+                    }else{
+                        eightbit.push_back(store.front());
+                        store.pop();
+                    }
+                    
+                     
+                
             }
-            
-            count++;
-        }
+            char res = packInt(eightbit);
+            v.push_back(res);
 
-        char res = packInt(eightbit);
+         }
+        
 
-        result = make_shared<vector<char>>(save);
+        result = make_shared<vector<char>>(v);
         //cout << "Str: " << str << endl;
         return result;
     }
 
+
 string Encoder::Decode(shared_ptr<vector<char>> code){
         string result;
         string store = "";
+        shared_ptr<vector<char>> unpack = unpackChar(code);
 
         //if the vector is empty
         if(code->size() < 1){
             throw invalid_argument("Decode Error: It is empty");
         }
 
-        for(char c : *code){
+        for(char c : *unpack){
             if(!isNumber(c)){
                 throw invalid_argument("Decode Error: the input character is not either 1 or 0");
             }
@@ -96,10 +119,20 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
                 //cout << "Store: " << store << endl;
             }else{
                 //found
-                result += SavingChar[store];
-                //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
-                store.clear();
-                store += c;
+                //If found the delimiter |, end the decode function and return the result
+               
+                if(SavingChar[store] == '|'){
+                    //break
+                    cout << "\nDecode Output: " << result << endl;
+                    return result;
+                    break;
+                }else{
+                    result += SavingChar[store];
+                    //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
+                    store.clear();
+                    store += c;
+                }
+                
             }
         }
         unordered_map<string,char>::const_iterator got = SavingChar.find(store);
@@ -109,10 +142,19 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
                 throw invalid_argument("Decode Error: Cannot find the Letter with your input character vector");
             }else{
                 //found
-                result += SavingChar[store];
-                //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
-                store.clear();
-                //store += c;
+                //If found the delimiter |, end the decode function and return the result
+               
+                if(SavingChar[store] == '|'){
+                    //break
+                    cout << "\nDecode Output: " << result << endl;
+                    return result;
+                    //break;
+                }else{
+                    result += SavingChar[store];
+                    //cout << "Letter: " << SavingChar[store] << ", Code: " << store << endl;
+                    //store.clear();
+                    //store += c;
+                }
             }
         
         cout << "\nDecode Output: " << result << endl;
@@ -151,7 +193,7 @@ void Encoder::BuildUpBsTree(){
 
             //pg.push( new LetterNode(letter[i], freq[i]) );
             //if the freq is 0, dont create node
-            if(fq < 1){
+            if(fq == 0){
                 // stop create node
             }else{
                 // create node

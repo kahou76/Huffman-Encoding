@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <iterator>
+#include <bitset>
 #include "LetterNode.h"
 using namespace std;
 
@@ -81,33 +82,43 @@ public:
     //pack up 8 index of int into a char
     //asuming vector of 8 or less bits
     char packInt(vector<int> v){
-        char result = 0; //0000 0000
-        int str = 0;
-        for(int i=0; i<v.size() && i<8; i++){
-            str *= 10;
-            str += v[i];
-            result << 1; //shift left
+        char result = 0x00; //0000 0000
+        string str = "";
+        for(int i=0; i<v.size(); i++){
+            //str *= 10;
+            str += to_string(v[i]);
+            result = result << 1; //shift left
             result = result | v[i]; // value is 0b0 or 0b1
         }
         int shift = 8 -v.size(); // for example, 
         cout << "Shift: " << shift << endl;
         result = result << shift;
         
+        string binary = bitset<8>(result).to_string();
         
         cout << "decial output: " << str << endl;
-        cout << "Binary output: " << result << endl;
+        cout << "Binary output: " << binary << endl;
 
         return result;
 
     }
 
-    //Unpack the char into int
-    int unpackChar(vector<int> v, int position){
-        int index = position / 32;
-        int offset = position % 32;
-        int integer = v[index];
-        int result = (integer >> offset) & 0b1;
+    //Unpack the vector<char> into {1,0,1,0,0,1,1,....}
+    shared_ptr<vector<char>> unpackChar(shared_ptr<vector<char>> v){
+        shared_ptr<vector<char>> result;
+        vector<char> store;
+
+        for(int i=0; i<v->size(); i++){
+            char c = v->at(i);
+            string binary = bitset<8>(c).to_string();
+            for(int j=0; j<binary.size(); j++){
+                store.push_back(binary[j]);
+            }
+        }
+        
+        result = make_shared<vector<char>>(store);
         return result;
     }
-
+    
+    
 };
