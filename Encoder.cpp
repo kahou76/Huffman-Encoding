@@ -120,7 +120,7 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
                
                 if(SavingChar[store] == '|'){
                     //break
-                    cout << "\nDecode Output: " << result << endl;
+                    //cout << "\nDecode Output: " << result << endl;
                     return result;
                     break;
                 }else{
@@ -143,14 +143,14 @@ string Encoder::Decode(shared_ptr<vector<char>> code){
                
                 if(SavingChar[store] == '|'){
                     //break
-                    cout << "\nDecode Output: " << result << endl;
+                    //cout << "\nDecode Output: " << result << endl;
                     return result;
                 }else{
                     result += SavingChar[store];
                 }
             }
         
-        cout << "\nDecode Output: " << result << endl;
+        //cout << "\nDecode Output: " << result << endl;
         return result;
     }
 
@@ -160,12 +160,10 @@ void Encoder::SaveCodes(shared_ptr<LetterNode> curr, string str){
         }
 
         if(curr->getLetter() != '$'){
-            //cout << curr->getLetter() << ": " << str << endl;
-            // SavingCode = {curr->getLetter(),str};
-            //cout << "TOTAL: "<<tf << endl;
+
             SavingCode[curr->getLetter()] = str;
             SavingChar[str] = curr->getLetter();
-            cout << "Letter: " << curr->getLetter() << ": " << SavingCode[curr->getLetter()] << endl;
+            //cout << "Letter: " << curr->getLetter() << ": " << SavingCode[curr->getLetter()] << endl;
             
         }
 
