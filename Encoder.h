@@ -11,10 +11,10 @@
 #include <bitset>
 #include <climits>
 #include "LetterNode.h"
+#include "Student.h"
 using namespace std;
 
-// template <class T> class shared_ptr;
-// template <class T>
+
 class Encoder{
 private:
     shared_ptr<vector<int>> frequency;
