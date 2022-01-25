@@ -1,9 +1,10 @@
 # include "Encoder.h"
 
+
 Encoder::Encoder(shared_ptr<vector<int>> fq){
         letter = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','|'};
-        if(fq->size() != 27){
-            throw invalid_argument("Constructor Error: Must have 26 Letter frequenices and one delimiter frequency at the 27th index");
+        if(fq->size() != 26){
+            throw invalid_argument("Constructor Error: Must have 26 Letter frequenices ");
         }
         this->frequency = fq;
         BuildUpBsTree();
@@ -12,7 +13,7 @@ Encoder::Encoder(shared_ptr<vector<int>> fq){
 
 shared_ptr<vector<char>> Encoder::Encode(string str){
         shared_ptr<vector<char>> result;
-        vector<char> save;
+        //vector<char> save;
         vector<char> v;
         queue<int> store;
         
@@ -39,30 +40,26 @@ shared_ptr<vector<char>> Encoder::Encode(string str){
             }
             // example: str[i] = a; tmp = 10011 
             string tmp = SavingCode[str[i]];
-            // string myString = "01000101";
-            // int z = atoi(myString.c_str());
-            // cout << z << endl;
+
                 for(int j =0 ;j <tmp.size(); j++){
-                    char c = tmp[j];
+                    //char c = tmp[j];
                     int s = tmp[j] - '0';
                     //cout << "S: " << s << endl;
-                    save.push_back(c);
+                    //save.push_back(c);
                     store.push(s);
                     
                 }
 
-            //push the delimiter | at the end of vector
-            // string end = SavingCode['|'];
-            // for(int u=0; u<end.size(); u++){
-
-            // }
         }
+
+        /*
         cout << "Enode Output: {";
         for(int y = 0; y<save.size(); y++){
             cout << "'" << save[y] << "'" << ",";
         }
         cout << "}";
         cout << endl;
+        */
 
         
         
@@ -192,6 +189,7 @@ void Encoder::BuildUpBsTree(){
             //if the freq is 0, dont create node
             if(fq == 0){
                 // stop create node
+                throw invalid_argument(" Error: Letter frequenices must not be 0");
             }else{
                 // create node
                 
@@ -202,8 +200,8 @@ void Encoder::BuildUpBsTree(){
             i++;
         }
         //Push the delimiter | node into pq
-        // shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[26],INT_MAX);
-        // pg.push(node);
+        shared_ptr<LetterNode> node = make_shared<LetterNode>(letter[26],INT_MAX);
+        pg.push(node);
         
 
         while(pg.size() != 1){
@@ -234,7 +232,7 @@ void Encoder::BuildUpBsTree(){
                 int a1 = a -'0';
                 int b1 = b -'0';
 
-                cout << "A: " << a1 << "    B1: " << b1 << endl;
+                //cout << "A: " << a1 << "    B1: " << b1 << endl;
 
                 if(a1 < b1){
                     // the smaller ascii value go left, larger go right
@@ -283,21 +281,20 @@ bool Encoder::isAlphabet(const string &str){
 
 char Encoder::packInt(vector<int> v){
     char result = 0x00; //0000 0000
-    string str = "";
+    //string str = "";
     for(int i=0; i<v.size(); i++){
-        //str *= 10;
-        str += to_string(v[i]);
+        //str += to_string(v[i]);
         result = result << 1; //shift left
         result = result | v[i]; // value is 0b0 or 0b1
     }
     int shift = 8 -v.size(); 
-    cout << "Shift: " << shift << endl;
+    //cout << "Shift: " << shift << endl;
     result = result << shift;
     
     string binary = bitset<8>(result).to_string();
     
-    cout << "decial output: " << str << endl;
-    cout << "Binary output: " << binary << endl;
+    //cout << "decial output: " << str << endl;
+    //cout << "Binary output: " << binary << endl;
 
     return result;
 

@@ -17,53 +17,25 @@ private:
 
 public:
 
-
-    // LetterNode(){
-    //     left = right = nullptr;
-    //     letter = '#';
-    //     freq = -1;
-    // }
-
-    LetterNode(char l, int f){
-        left = right = nullptr;
-        letter = l;
-        freq = f;
-    }
+    LetterNode(char l, int f);
 
     ~LetterNode(){}
 
-    void setLetter(char l){
-        letter = l;
-    }
+    void setLetter(char l);
 
-    void setFreq(int f){
-        freq = f;
-    }
+    void setFreq(int f);
 
-    void setLeft(shared_ptr<LetterNode> l){
-        left = l;
-    }
+    void setLeft(shared_ptr<LetterNode> l);
 
-    void setRight(shared_ptr<LetterNode> r){
-        right = r;
-    }
+    void setRight(shared_ptr<LetterNode> r);
 
-    char getLetter(){
-        return letter;
-    }
+    char getLetter();
 
-    int getFreq(){
-        return freq;
-    }
+    int getFreq();
 
-    shared_ptr<LetterNode> getLeft(){
-        return left;
-    }
+    shared_ptr<LetterNode> getLeft();
 
-    shared_ptr<LetterNode> getRight(){
-        return right;
-    }
-
+    shared_ptr<LetterNode> getRight();
 
 
 
